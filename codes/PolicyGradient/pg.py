@@ -24,10 +24,10 @@ class MLP(nn.Module):
 
 class PolicyGradient:
 
-    def __init__(self, n_states, cfg) -> None:
+    def __init__(self, n_states, cfg):
         self.gamma = cfg.gamma
         self.policy_net = MLP(n_states, hidden_dim= cfg.hidden_dim)
-        self.optimizer = torch.optim.RMSprop(self.policy_net.parameters, lr = cfg.lr)
+        self.optimizer = torch.optim.RMSprop(self.policy_net.parameters(), lr = cfg.lr)
         self.batch_size = cfg.batch_size
 
     def choose_action(self, state):

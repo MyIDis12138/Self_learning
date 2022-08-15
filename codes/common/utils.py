@@ -1,19 +1,7 @@
-#!/usr/bin/env python
-# coding=utf-8
-'''
-Author: John
-Email: johnjim0816@gmail.com
-Date: 2021-03-12 16:02:24
-LastEditor: John
-LastEditTime: 2022-07-31 23:18:04
-Discription: 
-Environment: 
-'''
 import os
 import numpy as np
 from pathlib import Path
 import matplotlib.pyplot as plt
-import seaborn as sns
 import json
 
 from matplotlib.font_manager import FontProperties  # 导入字体模块
@@ -29,13 +17,11 @@ def chinese_font():
     return font
 
 def plot_rewards_cn(rewards, ma_rewards, cfg, tag='train'):
-    ''' 中文画图
-    '''
-    sns.set()
+
     plt.figure()
-    plt.title(u"{}环境下{}算法的学习曲线".format(cfg.env_name,
-              cfg.algo_name), fontproperties=chinese_font())
-    plt.xlabel(u'回合数', fontproperties=chinese_font())
+    plt.title(u"{}env {}learning curves".format(cfg.env_name,
+              cfg.algo_name))
+    plt.xlabel(u'epsiode')
     plt.plot(rewards)
     plt.plot(ma_rewards)
     plt.legend((u'奖励', u'滑动平均奖励',), loc="best", prop=chinese_font())
@@ -45,7 +31,6 @@ def plot_rewards_cn(rewards, ma_rewards, cfg, tag='train'):
 
 
 def plot_rewards(rewards, ma_rewards, cfg, tag='train'):
-    sns.set()
     plt.figure()  # 创建一个图形实例，方便同时多画几个图
     plt.title("learning curve on {} of {} for {}".format(
         cfg.device, cfg.algo_name, cfg.env_name))
@@ -59,7 +44,6 @@ def plot_rewards(rewards, ma_rewards, cfg, tag='train'):
 
 
 def plot_losses(losses, algo="DQN", save=True, path='./'):
-    sns.set()
     plt.figure()
     plt.title("loss curve of {}".format(algo))
     plt.xlabel('epsiodes')
