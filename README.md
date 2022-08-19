@@ -22,5 +22,5 @@ https://www.aicrowd.com/challenges
 https://github.com/datawhalechina/easy-rl
 
 
-- My token 
+- My token :
 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
