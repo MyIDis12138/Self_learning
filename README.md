@@ -20,3 +20,7 @@ https://www.aicrowd.com/challenges
 
 - Easy-RL deep reinforcement learning
 https://github.com/datawhalechina/easy-rl
+
+
+- My token 
+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
