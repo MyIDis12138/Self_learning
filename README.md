@@ -23,4 +23,4 @@ https://github.com/datawhalechina/easy-rl
 
 
 - My token :
-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
+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
