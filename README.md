@@ -21,6 +21,5 @@ https://www.aicrowd.com/challenges
 - Easy-RL deep reinforcement learning
 https://github.com/datawhalechina/easy-rl
 
-
-- My token :
-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
+- DL-engine
+https://di-engine-docs.readthedocs.io/zh_CN/latest/
