@@ -23,3 +23,6 @@ https://github.com/datawhalechina/easy-rl
 
 - DL-engine
 https://di-engine-docs.readthedocs.io/zh_CN/latest/
+
+## code reference
+https://github.com/MyIDis12138/stable-baselines3
