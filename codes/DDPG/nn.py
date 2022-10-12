@@ -54,3 +54,7 @@ class Critic(nn.Module):
 def _init_weights(layer: nn.Module):
     if type(layer) == nn.Linear:
         nn.init.xavier_uniform_(layer.weight)
+
+
+net = Critic(3,4,[3,3,3])
+print(net)
