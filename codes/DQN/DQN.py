@@ -1,5 +1,5 @@
 
-from typing import Any, Optional, Dict, Type
+from typing import Optional
 import torch
 from torch import Tensor
 import torch.nn as nn
@@ -8,7 +8,6 @@ from copy import deepcopy
 from utils import MLP
 from memory import DQNBuffer
 import gym
-from utils import get_action_dim, get_obs_shape
 
 class Qnet(nn.Module):
     def __init__(
@@ -47,16 +46,20 @@ class DQN(object):
         gamma: float, 
         learning_rate: float, 
         buffer_sizes:int,
-        update_frequency: int
+        update_frequency: int,
+        q_net_h_dim:int,
+        q_net_layer_num:int
     ):
         self.env = env
         self.buffer_sizes = buffer_sizes
         
-        self.gamma = gamma
+        self.q_net_h_dim = q_net_h_dim
+        self.q_net_layer_num = q_net_layer_num
         self.batch_size = batch_size
         self._build_memory()
         self._build_q_net()
         
+        self.gamma = gamma
         self.lr = learning_rate
         self.optimizer = torch.optim.Adam(self.q_net.parameters(), lr=self.lr)
         self.update_frequency = update_frequency
@@ -73,26 +76,32 @@ class DQN(object):
         self.q_net = Qnet(
             input_dim=self.env.observation_space.shape[0],
             output_dim=self.env.action_space.n,
-            h_dim=10
+            h_dim=self.q_net_h_dim,
+            layer_num=self.q_net_layer_num
         )
         self.target_q_net = deepcopy(self.q_net)
 
     def select_action(self, obs):
         q_values = self.q_net(torch.as_tensor(obs))
-        action = q_values.argmax(dim=1).reshape(-1)
+        action = q_values.max(dim=0)[1].item()
         return action
 
     def update(self):
-        bs, ba, br, bs_, bd = self.memory.sample(self.batch_size)
+        try:
+            bs, ba, br, bs_, bd = self.memory.sample(self.batch_size)
+        except ValueError:
+            # Continue when samples less than a batch
+            return
+
         with torch.no_grad():
             qs = self.target_q_net(bs_)
-            max_qs = qs.max(dim=1, keepdim=True)[0]
+            max_qs,_ = qs.max(dim=2)
             target_q = br + (1-bd)*self.gamma*max_qs
         
         current_q = self.q_net(bs)
-        Q_values = torch.gather(input=current_q, dim=1, index=ba)
+        Q_values = torch.gather(input=current_q, dim=2, index=ba)
         
-        loss = F.smooth_l1_loss(Q_values,target_q)
+        loss = F.smooth_l1_loss(target_q, Q_values)
         
         self.optimizer.zero_grad()
         loss.backward()

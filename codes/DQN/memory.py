@@ -110,8 +110,8 @@ class DQNBuffer(BaseBuffer):
             self.pos = 0
 
     def sample(self, batch_size: int):
-        if self.pos < batch_size:
-            indexes = range(0, self.pos)
+        if(self.full):
+            indexes = random.sample(range(0, self.buffer_size), batch_size)
         else:
             indexes = random.sample(range(0, self.pos), batch_size)
 
@@ -127,6 +127,12 @@ class DQNBuffer(BaseBuffer):
             batch_action.append(self.actions[inx])
             batch_done.append(self.dones[inx])
             batch_reward.append(self.rewards[inx])
+        
+        batch_obs = np.array(batch_obs)       
+        batch_action = np.array(batch_action)
+        batch_reward = np.array(batch_reward)
+        batch_done = np.array(batch_done)
+        batch_obs_ = np.array(batch_obs_)
         
         tensor_obs = torch.as_tensor(batch_obs)
         tensor_obs_ = torch.as_tensor(batch_obs_)

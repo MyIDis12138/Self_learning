@@ -1,5 +1,3 @@
-
-from math import gamma
 import gym
 import random
 import numpy as np
@@ -18,11 +16,13 @@ agent_dict= {
         "gamma": 0.99,
         "learning_rate": 0.002,
         "buffer_size": 10000,
-        "update_frequency":20
+        "update_frequency":20,
+        "hidden_dim": 20,
+        "layer_num": 5
     }
 
 
-env = gym.make('CartPole-v1')
+env = gym.make('CartPole-v1', new_step_api=True)
 s = env.reset(seed=1)   
 
 agent = DQN(
@@ -31,7 +31,9 @@ agent = DQN(
     buffer_sizes=agent_dict["buffer_size"],
     gamma=agent_dict["gamma"],
     learning_rate=agent_dict["learning_rate"],
-    update_frequency=agent_dict["update_frequency"]
+    update_frequency=agent_dict["update_frequency"],
+    q_net_h_dim=agent_dict["hidden_dim"],
+    q_net_layer_num=agent_dict["layer_num"]
 )
 
 reward_buffer = np.empty(shape=cfg["episodes"])
@@ -53,21 +55,21 @@ for episode_i in range(cfg["episodes"]):
             a = env.action_space.sample()
         else:
             a = agent.select_action(s) 
-
+        
         s_, r, done, info,_ = env.step(a)
+        #print(a)
         a = np.array(a).copy()
         agent.memory.add(obs=s, action=a, done=done, reward=r, obs_=s_,infos=info) 
         s = s_
         episode_reward += r
+        
+        agent.update()
 
         if done:
             s = env.reset()
             reward_buffer[episode_i] = episode_reward
             break
-
-        #compute targets
-        if step_i>STPES_BEFORE:
-            agent.update() 
+        
     print(f"Episode: {episode_i}, reward: {episode_reward}")
 
 
