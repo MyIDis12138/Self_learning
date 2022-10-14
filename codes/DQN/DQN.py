@@ -1,4 +1,3 @@
-
 from typing import Optional
 import torch
 from torch import Tensor
@@ -111,5 +110,15 @@ class DQN(object):
         self.n_updates += 1
 
         if self.n_updates%self.update_frequency == 0:
-            self.target_q_net = deepcopy(self.q_net)
+            #print("update target")
+            self.target_q_net.load_state_dict(self.q_net.state_dict())
 
+    def save_model(self, path, name="best.pt"):
+        from pathlib import Path
+        Path(f"{path}/checkpoints/").mkdir(parents=True, exist_ok=True)
+        torch.save(self.q_net.state_dict(), f"{path}/checkpoints/{name}")
+    
+    def load_model(self, path, name="best.pt"):
+        self.q_net.load_state_dict(torch.load(f"{path}/checkpoints/{name}"))
+        #print("model loaded")
+        self.target_q_net = deepcopy(self.q_net)

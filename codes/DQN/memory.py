@@ -48,6 +48,9 @@ class BaseBuffer(ABC):
     def sample(self, batch_size: int):
         ...
 
+    def __len__(self):
+        return self.buffer_size if self.full else self.pos
+
 
 class UER(BaseBuffer):
     '''
