@@ -24,5 +24,9 @@ https://github.com/datawhalechina/easy-rl
 - DL-engine
 https://di-engine-docs.readthedocs.io/zh_CN/latest/
 
+## exploration 
+
+- https://lilianweng.github.io/posts/2020-06-07-exploration-drl/
+
 ## code reference
 https://github.com/MyIDis12138/stable-baselines3
