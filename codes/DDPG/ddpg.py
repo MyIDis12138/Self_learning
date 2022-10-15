@@ -106,4 +106,5 @@ class DDPG:
                 action = perturbed_action
             case _:
                 pass
+            
         return action

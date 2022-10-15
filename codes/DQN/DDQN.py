@@ -94,15 +94,22 @@ class DQN(object):
             # Continue when samples less than a batch
             return
 
-        with torch.no_grad():
-            qs = self.target_q_net(bs_)
-            max_qs,_ = qs.max(dim=2)
-            target_q = br + (1-bd)*self.gamma*max_qs
         
+        # Q(s_t, a_t)
         current_q = self.q_net(bs)
         Q_values = torch.gather(input=current_q, dim=2, index=ba)
+
+        # Q(s_t+1, argmax(Q(s_t,a_t)))
+        bs_act_ = self.q_net(bs_).max(dim=2)[1].unsqueeze(dim=1)
+        with torch.no_grad():
+            target_q = self.target_q_net(bs_)
+            target_q = torch.gather(input=target_q, dim=2, index=bs_act_)
         
-        loss = F.smooth_l1_loss(target_q, Q_values)
+        # y = r_t + gamma*Q(s_t+1, argmax(Q(s_t,a_t)))
+        y = br + (1-bd)*self.gamma*target_q
+        
+        # loss = [y - Q(s_t,a_t)]^2
+        loss = F.smooth_l1_loss(y, Q_values)
         
         self.optimizer.zero_grad()
         loss.backward()

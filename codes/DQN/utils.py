@@ -3,11 +3,12 @@ import torch.nn as nn
 from gym import spaces
 import numpy as np
 
-def MLP(input_dim, output_dim, hidden_dim, layer_num, acti_fn: nn.Module, activate_last: bool = False):
-    print(f"in_dim: {input_dim}, out_dim: {output_dim}, hidden_dim: {hidden_dim}, layer_num: {layer_num}")
-    assert layer_num>=0, layer_num
+
+def MLP(input_dim, output_dim, hidden_layers:list, acti_fn: nn.Module, activate_last: bool = False):
+    print(f"in_dim: {input_dim}, out_dim: {output_dim}, layer_num: {len(hidden_layers)}")
+    assert len(hidden_layers)>=0
     blocks = []
-    channels = [input_dim] + [hidden_dim] * (layer_num - 1) + [output_dim]
+    channels = [input_dim] + hidden_layers + [output_dim]
     for i, (in_channels, out_channels) in enumerate(zip(channels[:-1], channels[1:])):
         blocks.append(nn.Linear(in_channels,out_channels))
         if acti_fn  is not None:

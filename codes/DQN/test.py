@@ -1,11 +1,15 @@
-from lib2to3.pgen2.tokenize import TokenError
+from collections import namedtuple
 import gym
 import torch
 import numpy as np
+from DDQN import Qnet
 
-env = gym.make('CartPole-v1', new_step_api=True)
-s = env.reset(seed=1)   
-a = torch.ones(1,1,dtype=torch.int32)
-print(a)
-action = a.item()
-s = env.step(action)
+net = Qnet(
+    input_dim=4,
+    output_dim=2,
+    hidden_layers=[32,32]
+)
+
+x = net(torch.randn(5,4))
+x = x.max(dim=1)
+print(x)

@@ -26,7 +26,7 @@ class Actor(nn.Module):
         # FIXME: torch.jit.script raises torch.jit.frontend.UnsupportedNodeError: Lambda aren't supported
         action = torch.tanh(self.layers[-1](
             reduce( lambda activation, layer: F.relu(layer(activation)), self.layers[:-1], state )))
-
+            
         return action
 
 
@@ -44,10 +44,10 @@ class Critic(nn.Module):
 
     def forward(self, state: Tensor, action: Tensor):
 
-        action = self.layers[-1](
+        value = self.layers[-1](
             reduce( lambda activation, layer: F.relu(layer(activation)), self.layers[:-1], torch.cat([state, action], dim=1) ))
 
-        return action
+        return value
 
 
 @torch.no_grad()
@@ -55,6 +55,3 @@ def _init_weights(layer: nn.Module):
     if type(layer) == nn.Linear:
         nn.init.xavier_uniform_(layer.weight)
 
-
-net = Critic(3,4,[3,3,3])
-print(net)

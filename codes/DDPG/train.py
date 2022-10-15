@@ -1,5 +1,6 @@
 import sys,os
 from datetime import datetime
+from tkinter import E
 from typing import Dict
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -19,12 +20,12 @@ from DQN.utils import get_action_dim, get_obs_shape
 import gym
 import torch
 from torch.nn import functional as F
-
+import numpy as np
 
 cfg = {
-    "env_name": "CartPole-v1",
+    "env_name": 'MountainCarContinuous-v0',
     "episodes": 200,
-    "n_steps": 200,
+    "n_steps": 2000,
 }
 agent_cfg={
     "memory_sizes": 100000,
@@ -55,6 +56,7 @@ def _build_agent(env:gym.Env, agent_cfg:Dict):
         polyak=agent_cfg["polyak"],
         noise=AdaptiveParameterNoise
     )
+    return agent
 
 def into_tensor(s, a, r, s_,done):
     s = torch.as_tensor(s)
@@ -66,17 +68,19 @@ def into_tensor(s, a, r, s_,done):
 
 def main():
     env = gym.make(cfg["env_name"])
+    print(cfg["env_name"])
     agent:DDPG = _build_agent(env, agent_cfg)
     print("agent built")
 
-    s = env.reset()
+    s,_ = env.reset()
     reward_buffer = []
     for episode_i in range(cfg["episodes"]):
         episode_reward = 0    
         for step_i in range(cfg["n_steps"]):
             a = agent.compute_action(torch.as_tensor(s))
-            s_, r, done, _, info = env.step(a)
-            agent.memory.push(into_tensor(s,a,r,s_,done))
+            s_, r, done, _, info = env.step(np.array(a))
+            s, a, r, s_, done = into_tensor(s,a,r,s_,done)
+            agent.memory.push(action=a, next_state=s_, state=s, done=done,reward=r)
             
             episode_reward += r
             agent.update()

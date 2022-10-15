@@ -14,7 +14,6 @@ Transition = namedtuple('Transition', ('state', 'action', 'next_state', 'reward'
 
 
 class BaseBuffer(ABC):
-    
     def __init__(
         self, 
         buffer_size:int, 
@@ -50,7 +49,6 @@ class BaseBuffer(ABC):
 
     def __len__(self):
         return self.buffer_size if self.full else self.pos
-
 
 class UER(BaseBuffer):
     '''
@@ -93,8 +91,7 @@ class DQNBuffer(BaseBuffer):
         obs_: np.ndarray,
         action: np.ndarray,
         reward: np.ndarray,
-        done: np.ndarray,
-        infos:List[Dict[str, Any]]
+        done: np.ndarray
     ):
         if isinstance(self.observation_space, spaces.Discrete):
             obs = obs.reshape((self.envs_num,) + self.obs_shape)
@@ -144,3 +141,6 @@ class DQNBuffer(BaseBuffer):
         tensor_dones = torch.as_tensor(batch_done)
 
         return tensor_obs, tensor_action, tensor_reward, tensor_obs_, tensor_dones
+
+
+    
