@@ -45,9 +45,15 @@ class DQN(object):
         learning_rate: float, 
         buffer_sizes:int,
         update_frequency: int,
-        q_net_h_layers: list
+        q_net_h_layers: list,
+        m_steps:int,
+        double:bool = True,
+        dueling:bool = False
     ):
         self.env = env
+        self.double = double
+        self.dueling = dueling
+        self.m_steps = m_steps
 
         assert isinstance(self.env.action_space, Discrete)
         assert isinstance(self.env.observation_space, Box)
@@ -93,16 +99,19 @@ class DQN(object):
         except ValueError:
             # Continue when samples less than a batch
             return
-
+        
         with torch.no_grad():
-            qs = self.target_q_net(bs_)
-            max_qs,_ = qs.max(dim=2)
-            target_q = br + (1-bd)*self.gamma*max_qs
+            if self.double:
+                target_act = self.q_net(bs_).max(dim=2)[1].unsqueeze(dim=1)
+                target_q = torch.gather(self.target_q_net(bs_), 2, target_act)
+            else:
+                target_q,_ = self.target_q_net(bs_).max(dim=2)
+                
+        y = br + (1-bd)*self.gamma** self.m_steps *target_q
         
-        current_q = self.q_net(bs)
-        Q_values = torch.gather(input=current_q, dim=2, index=ba)
+        Q_values = torch.gather(input=self.q_net(bs), dim=2, index=ba)
         
-        loss = F.smooth_l1_loss(target_q, Q_values)
+        loss = F.smooth_l1_loss(y.squeeze(), Q_values.squeeze())
         
         self.optimizer.zero_grad()
         loss.backward()

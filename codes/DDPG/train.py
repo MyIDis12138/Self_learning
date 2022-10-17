@@ -1,3 +1,4 @@
+from functools import partial
 import sys,os
 from datetime import datetime
 from tkinter import E
@@ -14,7 +15,7 @@ import DDPG
 from DDPG.ddpg import DDPG
 from DDPG.nn import Actor, Critic
 from DDPG.memory import UER
-from DDPG.noise import AdaptiveParameterNoise
+from DDPG.noise import Gaussian
 from DQN.utils import get_action_dim, get_obs_shape
 
 import gym
@@ -30,8 +31,9 @@ cfg = {
 agent_cfg={
     "memory_sizes": 100000,
     "dicount_factor":0.99,
-    "polyak": 0.002,
-    "batch_sizes":128
+    "polyak": 0.99,
+    "batch_sizes":128,
+    "stddev": 0.01
 }
 
 def _build_agent(env:gym.Env, agent_cfg:Dict):
@@ -48,13 +50,13 @@ def _build_agent(env:gym.Env, agent_cfg:Dict):
     agent = DDPG(
         actor= actor,
         critic=critic,
-        actor_optimiser=torch.optim.Adam,
-        critic_optimiser=torch.optim.Adam,
+        actor_optimiser=partial(torch.optim.Adam, lr=0.001),
+        critic_optimiser=partial(torch.optim.Adam, lr=0.001),
         memory=UER(agent_cfg["memory_sizes"]),
         discount_factor=agent_cfg["dicount_factor"],
         batch_size=agent_cfg["batch_sizes"],
         polyak=agent_cfg["polyak"],
-        noise=AdaptiveParameterNoise
+        noise=Gaussian(stddev=agent_cfg["stddev"])
     )
     return agent
 
@@ -82,6 +84,7 @@ def main():
             s, a, r, s_, done = into_tensor(s,a,r,s_,done)
             agent.memory.push(action=a, next_state=s_, state=s, done=done,reward=r)
             
+            s = s_
             episode_reward += r
             agent.update()
             

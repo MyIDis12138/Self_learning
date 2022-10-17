@@ -36,7 +36,7 @@ def _init_weights(layer: nn.Module):
         nn.init.xavier_uniform_(layer.weight)
 
 
-class DQN(object):
+class DQN_multistep(object):
     def __init__(
         self,
         env: gym.Env,
@@ -45,9 +45,13 @@ class DQN(object):
         learning_rate: float, 
         buffer_sizes:int,
         update_frequency: int,
-        q_net_h_layers: list
+        q_net_h_layers: list,
+        double:bool = True,
+        dueling:bool = False
     ):
         self.env = env
+        self.double = double
+        self.dueling = dueling
 
         assert isinstance(self.env.action_space, Discrete)
         assert isinstance(self.env.observation_space, Box)
@@ -93,23 +97,19 @@ class DQN(object):
         except ValueError:
             # Continue when samples less than a batch
             return
-
         
-        # Q(s_t, a_t)
-        current_q = self.q_net(bs)
-        Q_values = torch.gather(input=current_q, dim=2, index=ba)
-
-        # Q(s_t+1, argmax(Q(s_t,a_t)))
-        bs_act_ = self.q_net(bs_).max(dim=2)[1].unsqueeze(dim=1)
         with torch.no_grad():
-            target_q = self.target_q_net(bs_)
-            target_q = torch.gather(input=target_q, dim=2, index=bs_act_)
-        
-        # y = r_t + gamma*Q(s_t+1, argmax(Q(s_t,a_t)))
+            if self.double:
+                target_act = self.q_net(bs_).max(dim=2)[1]
+                target_q = torch.gather(intput=self.target_q_net(bs_),dim=2,index= target_act)
+            else:
+                target_q,_ = self.target_q_net(bs_).max(dim=2)
+                
         y = br + (1-bd)*self.gamma*target_q
         
-        # loss = [y - Q(s_t,a_t)]^2
-        loss = F.smooth_l1_loss(y, Q_values)
+        Q_values = torch.gather(self.q_net(bs), dim=2, index=ba)
+        
+        loss = F.smooth_l1_loss(y.squeeze(), Q_values.squeeze())
         
         self.optimizer.zero_grad()
         loss.backward()

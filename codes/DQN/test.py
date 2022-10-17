@@ -1,15 +1,7 @@
-from collections import namedtuple
-import gym
-import torch
-import numpy as np
-from DDQN import Qnet
-
-net = Qnet(
-    input_dim=4,
-    output_dim=2,
-    hidden_layers=[32,32]
-)
-
-x = net(torch.randn(5,4))
-x = x.max(dim=1)
-print(x)
+x = [1,2,3,4,5]
+index = 4
+# reward = sum(map(lambda c, r: 0.99**c * r,
+#                     enumerate(x[index-3:index])))
+reward = sum(
+    [0.99**c * r for c, r in enumerate(x)])
+print(reward)

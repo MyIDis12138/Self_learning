@@ -1,7 +1,7 @@
 import random
 from collections import deque, namedtuple
 from abc import ABC, abstractmethod
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Tuple
 
 import numpy as np
 import torch
@@ -9,9 +9,6 @@ from torch import Tensor
 
 from gym import spaces
 from utils import get_action_dim, get_obs_shape
-
-Transition = namedtuple('Transition', ('state', 'action', 'next_state', 'reward', 'done'))
-
 
 class BaseBuffer(ABC):
     def __init__(
@@ -50,25 +47,6 @@ class BaseBuffer(ABC):
     def __len__(self):
         return self.buffer_size if self.full else self.pos
 
-class UER(BaseBuffer):
-    '''
-    Uniformly sampled
-
-    In SRS, each subset of k individuals has the same 
-    probability of being chosen for the sample as any 
-    other subset of k individuals.
-    https://en.wikipedia.org/wiki/Simple_random_sample
-    '''
-
-    def __init__(self, capacity: int):
-        self._buffer = deque(maxlen=capacity)
-
-    def push(self, state: Tensor, action: Tensor, reward: Tensor, next_state: Tensor, done: Tensor):
-        self._buffer.append( Transition(state, action, next_state, reward, done) )
-
-    def sample(self, batch_size: int) -> List[Transition]:
-        return random.sample(self._buffer, min(batch_size, self._buffer.count()))
-
 class DQNBuffer(BaseBuffer):
 
     def __init__(
@@ -93,10 +71,7 @@ class DQNBuffer(BaseBuffer):
         reward: np.ndarray,
         done: np.ndarray
     ):
-        if isinstance(self.observation_space, spaces.Discrete):
-            obs = obs.reshape((self.envs_num,) + self.obs_shape)
-            next_obs = next_obs.reshape((self.envs_num,) + self.obs_shape)
-
+        
         action = action.reshape((self.envs_num, self.action_dim))
         self.observations[self.pos] = np.array(obs[0]).copy()
         self.next_observations[self.pos] = np.array(obs_[0]).copy()
@@ -141,6 +116,3 @@ class DQNBuffer(BaseBuffer):
         tensor_dones = torch.as_tensor(batch_done)
 
         return tensor_obs, tensor_action, tensor_reward, tensor_obs_, tensor_dones
-
-
-    
