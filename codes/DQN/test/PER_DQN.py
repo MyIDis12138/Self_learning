@@ -1,13 +1,18 @@
-from typing import Optional
 import torch
-from torch import Tensor
 import torch.nn as nn
 import torch.nn.functional as F
-from copy import deepcopy
-from utils import MLP
-from memory import DQNBuffer
+from torch import Tensor
+from torch.utils.tensorboard import SummaryWriter
+
+
 import gym
 from gym.spaces import Discrete, Box
+from typing import Optional
+
+from copy import deepcopy
+from utils import MLP
+from memory import UER, DQNBuffer
+
 
 class Qnet(nn.Module):
     def __init__(
@@ -44,25 +49,28 @@ class DQN(object):
         gamma: float, 
         learning_rate: float, 
         buffer_sizes:int,
+        buffer_typ: UER | DQNBuffer,
         update_frequency: int,
-        q_net_h_layers: list
+        q_net_h_layers: list,
+        double_dqn: bool = True
     ):
         self.env = env
+        self.double = double_dqn
 
         assert isinstance(self.env.action_space, Discrete)
         assert isinstance(self.env.observation_space, Box)
 
-
         self.buffer_sizes = buffer_sizes
-        
         self.q_net_h_lyaer = q_net_h_layers
-        self.batch_size = batch_size
+        
         self._build_memory()
         self._build_q_net()
         
-        self.gamma = gamma
         self.lr = learning_rate
         self.optimizer = torch.optim.Adam(self.q_net.parameters(), lr=self.lr)
+
+        self.batch_size = batch_size
+        self.gamma = gamma
         self.update_frequency = update_frequency
         self.steps = 0
 
@@ -87,30 +95,29 @@ class DQN(object):
         action = q_values.max(dim=0)[1].item()
         return action
 
-    def update(self):
+    def update(self, logger:Optional[SummaryWriter]):
         try:
             bs, ba, br, bs_, bd = self.memory.sample(self.batch_size)
         except ValueError:
             # Continue when samples less than a batch
             return
 
-        
-        # Q(s_t, a_t)
         current_q = self.q_net(bs)
         Q_values = torch.gather(input=current_q, dim=2, index=ba)
-
-        # Q(s_t+1, argmax(Q(s_t,a_t)))
-        bs_act_ = self.q_net(bs_).max(dim=2)[1].unsqueeze(dim=1)
+        
         with torch.no_grad():
-            target_q = self.target_q_net(bs_)
-            target_q = torch.gather(input=target_q, dim=2, index=bs_act_)
+            if self.double:
+                maxq_action = self.q_net(bs_).max(dim=2)[1].unsqueeze(dim=1)
+                target_q = torch.gather(self.target_q_net(bs_), dim=2, index=maxq_action)
+            else:
+                target_q,_ = self.target_q_net(bs_).max(dim=2)
+
+        y = br + (1-bd)*self.gamma*target_q.squeeze(dim=1)
+        loss = F.smooth_l1_loss(y.squeeze(), Q_values.squeeze())
         
-        # y = r_t + gamma*Q(s_t+1, argmax(Q(s_t,a_t)))
-        y = br + (1-bd)*self.gamma*target_q
-        
-        # loss = [y - Q(s_t,a_t)]^2
-        loss = F.smooth_l1_loss(y, Q_values)
-        
+        if(logger!=None):
+            logger.add_scalar('loss', loss, self.steps)
+
         self.optimizer.zero_grad()
         loss.backward()
         self.optimizer.step()
@@ -130,3 +137,4 @@ class DQN(object):
         self.q_net.load_state_dict(torch.load(f"{path}/checkpoints/{name}"))
         #print("model loaded")
         self.target_q_net = deepcopy(self.q_net)
+

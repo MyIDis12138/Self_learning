@@ -13,8 +13,8 @@ curr_time = datetime.now().strftime("%Y%m%d-%H%M%S")
 import DDPG
 from DDPG.ddpg import DDPG
 from DDPG.nn import Actor, Critic
-from DDPG.memory import UER
-from DDPG.noise import AdaptiveParameterNoise
+from DDPG.memory import PER, UER
+from DDPG.noise import Gaussian
 from DQN.utils import get_action_dim, get_obs_shape
 
 import gym
@@ -30,7 +30,7 @@ cfg = {
 agent_cfg={
     "memory_sizes": 100000,
     "dicount_factor":0.99,
-    "polyak": 0.002,
+    "polyak": 0.99,
     "batch_sizes":128
 }
 
@@ -50,11 +50,11 @@ def _build_agent(env:gym.Env, agent_cfg:Dict):
         critic=critic,
         actor_optimiser=torch.optim.Adam,
         critic_optimiser=torch.optim.Adam,
-        memory=UER(agent_cfg["memory_sizes"]),
+        memory=PER(capacity=agent_cfg["memory_sizes"], alpha=0.5),
         discount_factor=agent_cfg["dicount_factor"],
         batch_size=agent_cfg["batch_sizes"],
         polyak=agent_cfg["polyak"],
-        noise=AdaptiveParameterNoise
+        noise=Gaussian(0.01)
     )
     return agent
 
@@ -65,6 +65,7 @@ def into_tensor(s, a, r, s_,done):
     s_ = torch.as_tensor(s_)
     done = torch.as_tensor(done)
     return s,a,r,s_,done
+
 
 def main():
     env = gym.make(cfg["env_name"])
@@ -85,6 +86,7 @@ def main():
             episode_reward += r
             agent.update()
             
+            s = s_
             if done:
                 s,_ = env.reset()
                 break

@@ -16,13 +16,13 @@ Transition = namedtuple('Transition', ('state', 'action', 'next_state', 'reward'
 class BaseBuffer(ABC):
     def __init__(
         self, 
-        buffer_size:int, 
+        capacity:int, 
         observation_space:spaces.Space, 
         action_space: spaces.Space,
         envs_num:int = 1
     ):
         super().__init__()
-        self.buffer_size = buffer_size
+        self.buffer_size = capacity
         self.observation_space = observation_space
         self.action_space = action_space
         self.action_dim = get_action_dim(self.action_space)
@@ -30,6 +30,13 @@ class BaseBuffer(ABC):
         self.envs_num = envs_num
         self.full = False
         self.pos = 0
+
+        self.observations = np.zeros((self.buffer_size, self.envs_num) + self.obs_shape, dtype=observation_space.dtype)
+        self.next_observations = np.zeros((self.buffer_size, self.envs_num) + self.obs_shape, dtype=observation_space.dtype)
+        self.actions = np.zeros((self.buffer_size, self.envs_num, self.action_dim), dtype=action_space.dtype)
+        self.rewards = np.zeros((self.buffer_size, self.envs_num), dtype=np.float32)
+        self.dones = np.zeros((self.buffer_size, self.envs_num), dtype=np.int8)
+
 
     @abstractmethod
     def add(
@@ -46,6 +53,10 @@ class BaseBuffer(ABC):
     @abstractmethod
     def sample(self, batch_size: int):
         ...
+
+    @property
+    def size(self):
+        return self.buffer_size if self.full else self.pos
 
     def __len__(self):
         return self.buffer_size if self.full else self.pos
@@ -79,12 +90,7 @@ class DQNBuffer(BaseBuffer):
         envs_num: int = 1
     ):
         super(DQNBuffer,self).__init__(buffer_size, observation_space, action_space, envs_num)
-        self.observations = np.zeros((self.buffer_size, self.envs_num) + self.obs_shape, dtype=observation_space.dtype)
-        self.next_observations = np.zeros((self.buffer_size, self.envs_num) + self.obs_shape, dtype=observation_space.dtype)
-        self.actions = np.zeros((self.buffer_size, self.envs_num, self.action_dim), dtype=action_space.dtype)
-        self.rewards = np.zeros((self.buffer_size, self.envs_num), dtype=np.float32)
-        self.dones = np.zeros((self.buffer_size, self.envs_num), dtype=np.float32)
-
+        
     def add(
         self,
         obs: np.ndarray,
@@ -93,13 +99,9 @@ class DQNBuffer(BaseBuffer):
         reward: np.ndarray,
         done: np.ndarray
     ):
-        if isinstance(self.observation_space, spaces.Discrete):
-            obs = obs.reshape((self.envs_num,) + self.obs_shape)
-            next_obs = next_obs.reshape((self.envs_num,) + self.obs_shape)
 
-        action = action.reshape((self.envs_num, self.action_dim))
-        self.observations[self.pos] = np.array(obs[0]).copy()
-        self.next_observations[self.pos] = np.array(obs_[0]).copy()
+        self.observations[self.pos] = np.array(obs).copy()
+        self.next_observations[self.pos] = np.array(obs_).copy()
         self.actions[self.pos] = np.array(action).copy()
         self.rewards[self.pos] = np.array(reward).copy()
         self.dones[self.pos] = np.array(done).copy()
@@ -143,4 +145,72 @@ class DQNBuffer(BaseBuffer):
         return tensor_obs, tensor_action, tensor_reward, tensor_obs_, tensor_dones
 
 
+class PER(BaseBuffer):
+    def __init__(
+        self,
+        buffer_size: int,
+        observation_space: spaces.Space,
+        action_space: spaces.Space,
+        alpha:float ,
+        envs_num: int = 1,
+        epsilon: float = 0.01
+    ):
+        super(DQNBuffer,self).__init__(buffer_size, observation_space, action_space, envs_num)
+        self.priority_max = 1.0
+        self._sum_tree = np.zeros(buffer_size*2-1)
+        self._alpha = alpha
+        self._epsilon = epsilon
     
+    def update_priority(self, index:int, priority:float):
+        node_index = self.buffer_size - index
+        difference = (priority + self._epsilon)**self._alpha - self._sum_tree[node_index]
+
+        while node_index > 0:
+            self._sum_tree[node_index] += difference
+            node_index = (node_index-1)//2
+
+        self._sum_tree[0] += difference
+        self.priority_max = self._sum_tree[0]
+
+    def _get_index(self, weight:float) -> int:
+        
+        index = 0
+        while True:
+            left = index*2 + 1
+            if left < len(self._sum_tree): 
+                if self._sum_tree[left] < weight or np.isclose(weight, self._sum_tree[left], rtol=1e-3):
+                    weight -= self._sum_tree[left]
+                    index = left + 1 # to right node
+                else:
+                    index = left
+            else:
+                break
+
+        return index-self.buffer_size-1
+
+    def add(
+        self,
+        obs: np.ndarray,
+        obs_: np.ndarray,
+        action: np.ndarray,
+        reward: np.ndarray,
+        done: np.ndarray
+    ):
+
+        self.observations[self.pos] = np.array(obs).copy()
+        self.next_observations[self.pos] = np.array(obs_).copy()
+        self.actions[self.pos] = np.array(action).copy()
+        self.rewards[self.pos] = np.array(reward).copy()
+        self.dones[self.pos] = np.array(done).copy()
+
+        self.pos += 1
+        if self.pos == self.buffer_size:
+            self.full = True
+            self.pos = 0
+
+        self._sum_tree[self.buffer_size + self.pos -1]  = 1
+
+    def sample(self, batch_size: int):
+        uniofrm_wights = [ random.uniform(0,self.priority_max) for i in range(batch_size)]
+
+        return super().sample(batch_size)
