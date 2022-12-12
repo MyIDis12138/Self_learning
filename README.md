@@ -12,6 +12,9 @@ https://www.youtube.com/watch?v=TCCjZe0y4Qc&list=PLqRF21Jxw1hLwqzN-uCv-x2pszaQrb
 - UC berkeley 2020 online course
 https://www.bilibili.com/video/BV12341167kL?spm_id_from=333.999.0.0&vd_source=f00e550240a24857f20e7b19be677b54
 
+- CMU convext Optimization
+https://www.stat.cmu.edu/~ryantibs/convexopt/
+
 - Reinforcement Learning textbook
 http://incompleteideas.net/book/RLbook2020.pdf
 
