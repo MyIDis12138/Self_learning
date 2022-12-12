@@ -22,10 +22,6 @@
 - [Easy-RL deep reinforcement learning](https://github.com/datawhalechina/easy-rl)
 
 
-- [DL-engine](https://di-engine-docs.readthedocs.io/zh_CN/latest/)
-
-
-
 - [exploration](https://lilianweng.github.io/posts/2020-06-07-exploration-drl/)
 
 
@@ -33,4 +29,7 @@
 
 
 ## code reference
-https://github.com/MyIDis12138/stable-baselines3
+- [stable baseline3](https://github.com/DLR-RM/stable-baselines3)
+- [tianshou](https://github.com/thu-ml/tianshou)
+- [ray](https://docs.ray.io/en/latest/rllib/index.html)
+- [DL-engine](https://di-engine-docs.readthedocs.io/zh_CN/latest/)
