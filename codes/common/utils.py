@@ -19,45 +19,45 @@ def chinese_font():
 def plot_rewards_cn(rewards, ma_rewards, cfg, tag='train'):
 
     plt.figure()
-    plt.title(u"{}env {}learning curves".format(cfg.env_name,
-              cfg.algo_name))
+    plt.title(f"{cfg.env_name}env {cfg.algo_name}learning curves")
     plt.xlabel(u'epsiode')
     plt.plot(rewards)
     plt.plot(ma_rewards)
     plt.legend((u'奖励', u'滑动平均奖励',), loc="best", prop=chinese_font())
     if cfg.save:
-        plt.savefig(cfg.result_path+f"{tag}_rewards_curve_cn")
+        plt.savefig(f"{cfg.result_path}{tag}_rewards_curve_cn")
     # plt.show()
 
 
 def plot_rewards(rewards, ma_rewards, cfg, tag='train'):
     plt.figure()  # 创建一个图形实例，方便同时多画几个图
-    plt.title("learning curve on {} of {} for {}".format(
-        cfg.device, cfg.algo_name, cfg.env_name))
+    plt.title(
+        f"learning curve on {cfg.device} of {cfg.algo_name} for {cfg.env_name}"
+    )
     plt.xlabel('epsiodes')
     plt.plot(rewards, label='rewards')
     plt.plot(ma_rewards, label='ma rewards')
     plt.legend()
     if cfg.save_fig:
-        plt.savefig(cfg.result_path+"{}_rewards_curve".format(tag))
+        plt.savefig(f"{cfg.result_path}{tag}_rewards_curve")
     plt.show()
 
 
 def plot_losses(losses, algo="DQN", save=True, path='./'):
     plt.figure()
-    plt.title("loss curve of {}".format(algo))
+    plt.title(f"loss curve of {algo}")
     plt.xlabel('epsiodes')
     plt.plot(losses, label='rewards')
     plt.legend()
     if save:
-        plt.savefig(path+"losses_curve")
+        plt.savefig(f"{path}losses_curve")
     plt.show()
 
 def save_results(dic, tag='train', path='./results'):
     ''' 保存奖励
     '''
     for key,value in dic.items():
-        np.save(path+'{}_{}.npy'.format(tag,key),value)
+        np.save(f'{path}{tag}_{key}.npy', value)
     print('Results saved！')
     
 # def save_results(rewards, ma_rewards, tag='train', path='./results'):
@@ -86,11 +86,11 @@ def del_empty_dir(*paths):
 
 def save_args(args):
     # save parameters    
-    args_dict = vars(args)   
-    with open(args.result_path+'params.json', 'w') as fp:
-        json.dump(args_dict, fp)   
+    args_dict = vars(args)
+    with open(f'{args.result_path}params.json', 'w') as fp:
+        json.dump(args_dict, fp)
     print("Parameters saved!")
-def smooth(data, weight=0.9):  
+def smooth(data, weight=0.9):
     '''_summary_
 
     Args:
@@ -101,7 +101,7 @@ def smooth(data, weight=0.9):
         smoothed (List): 平滑后的数据
     '''
     last = data[0]  # First value in the plot (first timestep)
-    smoothed = list()
+    smoothed = []
     for point in data:
         smoothed_val = last * weight + (1 - weight) * point  # 计算平滑值
         smoothed.append(smoothed_val)                    

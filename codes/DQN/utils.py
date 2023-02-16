@@ -6,22 +6,20 @@ import numpy as np
 
 def MLP(input_dim, output_dim, hidden_layers:list, acti_fn: nn.Module, activate_last: bool = False):
     print(f"in_dim: {input_dim}, out_dim: {output_dim}, layer_num: {len(hidden_layers)}")
-    assert len(hidden_layers)>=0
     blocks = []
     channels = [input_dim] + hidden_layers + [output_dim]
-    for i, (in_channels, out_channels) in enumerate(zip(channels[:-1], channels[1:])):
+    for in_channels, out_channels in zip(channels[:-1], channels[1:]):
         blocks.append(nn.Linear(in_channels,out_channels))
         if acti_fn  is not None:
             blocks.append(acti_fn)
-    if(~activate_last):
-        blocks = blocks[0:-1]
+    if (~activate_last):
+        blocks = blocks[:-1]
     return sequential_net(blocks)
 
 
 def sequential_net(layers: list) -> nn.Sequential:
     assert isinstance(layers, list)
-    seq = nn.Sequential(*layers)
-    return seq
+    return nn.Sequential(*layers)
 
 def get_action_dim(action_space: spaces.Space) -> int:
     """
@@ -36,7 +34,7 @@ def get_action_dim(action_space: spaces.Space) -> int:
         return 1
     elif isinstance(action_space, spaces.MultiDiscrete):
         # Number of discrete actions
-        return int(len(action_space.nvec))
+        return len(action_space.nvec)
     elif isinstance(action_space, spaces.MultiBinary):
         # Number of binary actions
         return int(action_space.n)
@@ -59,7 +57,7 @@ def get_obs_shape(
         return (1,)
     elif isinstance(observation_space, spaces.MultiDiscrete):
         # Number of discrete features
-        return (int(len(observation_space.nvec)),)
+        return (len(observation_space.nvec), )
     elif isinstance(observation_space, spaces.MultiBinary):
         # Number of binary features
         return (int(observation_space.n),)

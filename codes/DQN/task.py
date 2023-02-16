@@ -119,8 +119,7 @@ def PER_train(env:gym.Env, agent:DQN, logger:SummaryWriter, cfg):
     s,_ = env.reset()
     reward_buffer = []
 
-    for episode_i in range(cfg["episodes"]):
-        delta = 0
+    delta = 0
 
 
 

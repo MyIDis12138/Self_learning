@@ -60,7 +60,7 @@ class MTstepBuffer:
 
 def MT_train(env: gym.Env, agent:DQN, logger:SummaryWriter, cfg):
 
-    s,_ = env.reset()  
+    s,_ = env.reset()
     epsiode_reward_buffer = []
     done = False
     steps = cfg["m_steps"]
@@ -70,31 +70,35 @@ def MT_train(env: gym.Env, agent:DQN, logger:SummaryWriter, cfg):
         episode_reward = 0
         step_i=0
         s,_ = env.reset()
-    
+
         m_steps_buffer.clear
-        
+
         epsilon = np.interp(
             episode_i, 
             [0, cfg["epsilon_decay_end"]], 
             [cfg["epsilon_start"], cfg["epsilon_end"]]
             )
-        
+
         #for step_i in range(cfg["n_time_step"]):
         while True:
             if random.random() > epsilon:
                 a = env.action_space.sample()
             else:
                 a = agent.select_action(s) 
-            
+
             s_, r, done, _, info = env.step(a)
-            
+
             m_steps_buffer.add(s,s_,np.array(a),r,done)
-            
+
             if step_i>=steps:
                 
-                reward = sum([agent.gamma**c * r 
-                    for c, r in enumerate(m_steps_buffer.reward_buffer[step_i-steps:step_i])])
-                
+                reward = sum(
+                    agent.gamma**c * r
+                    for c, r in enumerate(
+                        m_steps_buffer.reward_buffer[step_i - steps : step_i]
+                    )
+                )
+
                 agent.memory.add(
                     obs=m_steps_buffer.obs_buffer[step_i-steps],
                     obs_=m_steps_buffer.obs_buffer_[step_i],
@@ -102,7 +106,7 @@ def MT_train(env: gym.Env, agent:DQN, logger:SummaryWriter, cfg):
                     reward=reward,
                     done=m_steps_buffer.done_buffer[step_i]
                 )
-            
+
             s = s_
             episode_reward += r
             agent.update(logger)
@@ -111,7 +115,7 @@ def MT_train(env: gym.Env, agent:DQN, logger:SummaryWriter, cfg):
 
             if done or step_i>cfg["n_time_step"]:
                 break
-        
+
         logger.add_scalar('episode reward', episode_reward, episode_i)
         logger.add_scalar('epsilon', epsilon, episode_i)
         logger.add_scalar('buffer', agent.memory.size, episode_i)
@@ -119,8 +123,8 @@ def MT_train(env: gym.Env, agent:DQN, logger:SummaryWriter, cfg):
         if (len(epsiode_reward_buffer)>1 and episode_reward >= max(epsiode_reward_buffer)):
             name = cfg["env_name"]+"_"+str(cfg["layer_num"])+"_best.pt"
             agent.save_model(curr_path, name)
-        
-        epsiode_reward_buffer.append(episode_reward) 
+
+        epsiode_reward_buffer.append(episode_reward)
         print(f"Episode: {episode_i}, reward: {episode_reward}")
 
     env.close()

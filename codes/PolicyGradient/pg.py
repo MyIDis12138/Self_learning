@@ -73,7 +73,7 @@ class PolicyGradient:
         self.optimizer.step()
 
     def save(self, path):
-        torch.save(self.policy_net.state_dict(), path + 'pg_checkpoint.pt')
+        torch.save(self.policy_net.state_dict(), f'{path}pg_checkpoint.pt')
     
     def load(self, path):
-        self.policy_net.load_state_dict(torch.load(path + 'pg_checkpoint.pt'))
+        self.policy_net.load_state_dict(torch.load(f'{path}pg_checkpoint.pt'))
