@@ -33,3 +33,7 @@
 - [tianshou](https://github.com/thu-ml/tianshou)
 - [ray](https://docs.ray.io/en/latest/rllib/index.html)
 - [DL-engine](https://di-engine-docs.readthedocs.io/zh_CN/latest/)
+
+
+## Topics to follow
+- [pytorch RL](https://discuss.pytorch.org/c/reinforcement-learning/6)
