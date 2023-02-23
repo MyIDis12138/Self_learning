@@ -1,3 +1,5 @@
+- [Suggestions and thinking on research from J.Schulman](http://joschu.net/blog/opinionated-guide-ml-research.html)
+
 # RL_learning
 
 - [Key Papers in RL ](https://spinningup.openai.com/en/latest/spinningup/keypapers.html)
