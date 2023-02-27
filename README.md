@@ -30,6 +30,12 @@
 - [curriculum](https://lilianweng.github.io/posts/2020-01-29-curriculum-rl/)
 
 
+## Paper reading plan
+- [ ] [ICM: Intrinsic Reward](https://arxiv.org/pdf/1705.05363)
+- [ ] [Reward shaping](https://arxiv.org/abs/2205.07015) 
+- [ ] [Policy Dissection](https://arxiv.org/pdf/2206.00152.pdf)
+
+
 ## code reference
 - [stable baseline3](https://github.com/DLR-RM/stable-baselines3)
 - [tianshou](https://github.com/thu-ml/tianshou)
