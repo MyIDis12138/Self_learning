@@ -35,6 +35,7 @@
 - [ ] [Reward shaping](https://arxiv.org/abs/2205.07015) 
 - [ ] [Policy Dissection](https://arxiv.org/abs/2206.00152)
 - [ ] [Pop-Art](https://arxiv.org/abs/1602.07714)
+- [ ] [Value Rescale](https://arxiv.org/abs/1805.11593)
 
 
 ## code reference
