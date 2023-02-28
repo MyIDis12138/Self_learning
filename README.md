@@ -33,7 +33,7 @@
 ## Paper reading plan
 - [ ] [ICM: Intrinsic Reward](https://arxiv.org/abs/1705.05363) -> [RND](https://arxiv.org/abs/1810.12894)
 - [ ] [Reward shaping](https://arxiv.org/abs/2205.07015) 
-- [ ] [Policy Dissection](https://arxiv.org/abs/2206.00152)
+- [-] [Policy Dissection](https://arxiv.org/abs/2206.00152)
 - [ ] [Pop-Art](https://arxiv.org/abs/1602.07714)
 - [ ] [Value Rescale](https://arxiv.org/abs/1805.11593)
 
