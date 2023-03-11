@@ -45,6 +45,7 @@
 ### deal with POMDP
 - [ ] [PerfectDou](https://arxiv.org/abs/2203.16406?context=cs)
 - [ ] [Perceiver IO](https://arxiv.org/abs/2107.14795)
+- [ ] [Gated TransformerXL](https://arxiv.org/abs/1910.06764)
 
 ## code reference
 - [stable baseline3](https://github.com/DLR-RM/stable-baselines3)
