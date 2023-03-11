@@ -1,4 +1,4 @@
-- [Suggestions and thinking on research from J.Schulman](http://joschu.net/blog/opinionated-guide-ml-research.html)
+# [Suggestions and thinking on research from J.Schulman](http://joschu.net/blog/opinionated-guide-ml-research.html)
 
 # RL_learning
 
