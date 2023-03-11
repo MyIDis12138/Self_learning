@@ -1,5 +1,8 @@
-# [Suggestions and thinking on research from J.Schulman](http://joschu.net/blog/opinionated-guide-ml-research.html)
-# [Randy Pausch Last Lecture: Achieving Your Childhood Dreams ](https://www.youtube.com/watch?v=ji5_MqicxSo)
+# Spirit Sources
+[Suggestions and thinking on research from J.Schulman](http://joschu.net/blog/opinionated-guide-ml-research.html)
+[Randy Pausch Last Lecture: Achieving Your Childhood Dreams ](https://www.youtube.com/watch?v=ji5_MqicxSo)
+[用随机梯度下降来优化人生](https://zhuanlan.zhihu.com/p/414009313)
+[博士这五年](https://zhuanlan.zhihu.com/p/25099638)
 
 # RL_learning
 
