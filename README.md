@@ -31,12 +31,16 @@
 
 
 ## Paper reading plan
+### Reward shaping
 - [ ] [ICM: Intrinsic Reward](https://arxiv.org/abs/1705.05363) -> [RND](https://arxiv.org/abs/1810.12894)
 - [ ] [Reward shaping](https://arxiv.org/abs/2205.07015) 
 - [x] [Policy Dissection](https://arxiv.org/abs/2206.00152)
 - [ ] [Pop-Art](https://arxiv.org/abs/1602.07714)
 - [ ] [Value Rescale](https://arxiv.org/abs/1805.11593)
 
+### deal with POMDP
+- [ ] [PerfectDou](https://arxiv.org/abs/2203.16406?context=cs)
+- [ ] [Perceiver IO](https://arxiv.org/abs/2107.14795)
 
 ## code reference
 - [stable baseline3](https://github.com/DLR-RM/stable-baselines3)
