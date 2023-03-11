@@ -1,4 +1,5 @@
 # [Suggestions and thinking on research from J.Schulman](http://joschu.net/blog/opinionated-guide-ml-research.html)
+# [Randy Pausch Last Lecture: Achieving Your Childhood Dreams ](https://www.youtube.com/watch?v=ji5_MqicxSo)
 
 # RL_learning
 
