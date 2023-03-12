@@ -35,6 +35,9 @@
 
 
 ## Paper reading plan
+### Spicial topics
+- [ ] [RLHF](https://arxiv.org/abs/2204.05862)
+
 ### Reward shaping
 - [ ] [ICM: Intrinsic Reward](https://arxiv.org/abs/1705.05363) -> [RND](https://arxiv.org/abs/1810.12894)
 - [ ] [Reward shaping](https://arxiv.org/abs/2205.07015) 
