@@ -35,8 +35,9 @@
 
 
 ## Paper reading plan
-### Spicial topics
+### RLHF paper collection [repo](https://github.com/opendilab/awesome-RLHF)
 - [ ] [RLHF](https://arxiv.org/abs/2204.05862)
+
 
 ### Reward shaping
 - [ ] [ICM: Intrinsic Reward](https://arxiv.org/abs/1705.05363) -> [RND](https://arxiv.org/abs/1810.12894)
