@@ -37,7 +37,8 @@
 ## Paper reading plan
 ### RLHF paper collection [repo](https://github.com/opendilab/awesome-RLHF)
 - [ ] [RLHF](https://arxiv.org/abs/2204.05862)
-
+- [ ] [GPT future](https://arxiv.org/abs/2303.10130)
+- [x] [GPT4 tech report](https://arxiv.org/abs/2303.08774)
 
 ### Reward shaping
 - [ ] [ICM: Intrinsic Reward](https://arxiv.org/abs/1705.05363) -> [RND](https://arxiv.org/abs/1810.12894)
