@@ -41,7 +41,9 @@
 - [ ] [AGI](https://arxiv.org/abs/2303.12712)
 
 ### RLHF paper collection [repo](https://github.com/opendilab/awesome-RLHF)
-- [ ] [RLHF](https://arxiv.org/abs/2204.05862)
+- [ ] [Anthropic LLM](https://arxiv.org/abs/2204.05862)
+- [x] [InstructGPT](https://arxiv.org/abs/2203.02155)
+- [ ] [RLHF](https://arxiv.org/abs/1909.08593)
 
 
 ### Reward shaping
