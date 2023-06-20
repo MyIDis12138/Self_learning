@@ -8,17 +8,17 @@
 
 [blogs]| [Key Papers in RL ](https://spinningup.openai.com/en/latest/spinningup/keypapers.html)
 
+[blogs] | [challenges in AI](https://www.aicrowd.com/challenges)
+
 [Online book] | [online RL book](https://datawhalechina.github.io/easy-rl/#/)
+
+[Online book] | [Reinforcement Learning textbook](http://incompleteideas.net/book/RLbook2020.pdf)
 
 [videos] | [DeepMind X UCL 2021 online course](https://www.youtube.com/watch?v=TCCjZe0y4Qc&list=PLqRF21Jxw1hLwqzN-uCv-x2pszaQrbsCN)
 
 [videos] | [UC berkeley 2020 online course](https://www.bilibili.com/video/BV12341167kL?spm_id_from=333.999.0.0&vd_source=f00e550240a24857f20e7b19be677b54)
 
 [videos] | [CMU convext Optimization](https://www.stat.cmu.edu/~ryantibs/convexopt-F18/)
-
-[Online book] | [Reinforcement Learning textbook](http://incompleteideas.net/book/RLbook2020.pdf)
-
-[blogs] | [challenges in AI](https://www.aicrowd.com/challenges)
 
 
 ## Paper reading plan
