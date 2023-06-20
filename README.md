@@ -1,4 +1,4 @@
-# Spirit Sources
+# Insights
 - [Suggestions and thinking on research from J.Schulman](http://joschu.net/blog/opinionated-guide-ml-research.html)
 - [Randy Pausch Last Lecture: Achieving Your Childhood Dreams ](https://www.youtube.com/watch?v=ji5_MqicxSo)
 - [用随机梯度下降来优化人生](https://zhuanlan.zhihu.com/p/414009313)
@@ -12,13 +12,13 @@
 - [online RL book](https://datawhalechina.github.io/easy-rl/#/)
 
 
-- [DeepMind X UCL 2021 online course](https://www.youtube.com/watch?v=TCCjZe0y4Qc&list=PLqRF21Jxw1hLwqzN-uCv-x2pszaQrbsCN)
+- [DeepMind X UCL 2021 online course(videos)](https://www.youtube.com/watch?v=TCCjZe0y4Qc&list=PLqRF21Jxw1hLwqzN-uCv-x2pszaQrbsCN)
 
 
-- [UC berkeley 2020 online course](https://www.bilibili.com/video/BV12341167kL?spm_id_from=333.999.0.0&vd_source=f00e550240a24857f20e7b19be677b54)
+- [UC berkeley 2020 online course(videos)](https://www.bilibili.com/video/BV12341167kL?spm_id_from=333.999.0.0&vd_source=f00e550240a24857f20e7b19be677b54)
 
 
-- [CMU convext Optimization](https://www.stat.cmu.edu/~ryantibs/convexopt-F18/)
+- [CMU convext Optimization(videos)](https://www.stat.cmu.edu/~ryantibs/convexopt-F18/)
 
 - [Reinforcement Learning textbook](http://incompleteideas.net/book/RLbook2020.pdf)
 
@@ -35,6 +35,9 @@
 
 
 ## Paper reading plan
+### works on speeding up
+- [ ] [Reduce memory usage for LLMs](https://arxiv.org/abs/2306.09782)
+
 ### GPT related
 - [ ] [GPT future](https://arxiv.org/abs/2303.10130)
 - [x] [GPT4 tech report](https://arxiv.org/abs/2303.08774)
@@ -53,7 +56,7 @@
 - [ ] [Pop-Art](https://arxiv.org/abs/1602.07714)
 - [ ] [Value Rescale](https://arxiv.org/abs/1805.11593)
 
-### deal with POMDP
+### Deal with POMDP
 - [ ] [PerfectDou](https://arxiv.org/abs/2203.16406?context=cs)
 - [ ] [Perceiver IO](https://arxiv.org/abs/2107.14795)
 - [ ] [Gated TransformerXL](https://arxiv.org/abs/1910.06764)
