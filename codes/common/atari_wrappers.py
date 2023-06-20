@@ -143,11 +143,7 @@ class WarpFrame(gym.ObservationWrapper):
         self._height = height
         self._grayscale = grayscale
         self._key = dict_space_key
-        if self._grayscale:
-            num_colors = 1
-        else:
-            num_colors = 3
-
+        num_colors = 1 if self._grayscale else 3
         new_space = gym.spaces.Box(
             low=0,
             high=255,
@@ -163,11 +159,7 @@ class WarpFrame(gym.ObservationWrapper):
         assert original_space.dtype == np.uint8 and len(original_space.shape) == 3
 
     def observation(self, obs):
-        if self._key is None:
-            frame = obs
-        else:
-            frame = obs[self._key]
-
+        frame = obs if self._key is None else obs[self._key]
         if self._grayscale:
             frame = cv2.cvtColor(frame, cv2.COLOR_RGB2GRAY)
         frame = cv2.resize(

@@ -97,8 +97,7 @@ class DQN(object):
     @torch.no_grad()
     def select_action(self, obs):
         q_values = self.q_net(torch.as_tensor(obs))
-        action = q_values.max(dim=0)[1].item()
-        return action
+        return q_values.max(dim=0)[1].item()
 
     def update_target(self):
         with torch.no_grad():

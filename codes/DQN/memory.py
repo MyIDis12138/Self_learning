@@ -112,10 +112,10 @@ class DQNBuffer(BaseBuffer):
             self.pos = 0
 
     def sample(self, batch_size: int):
-        if(self.full):
-            indexes = random.sample(range(0, self.buffer_size), batch_size)
+        if self.full:
+            indexes = random.sample(range(self.buffer_size), batch_size)
         else:
-            indexes = random.sample(range(0, self.pos), batch_size)
+            indexes = random.sample(range(self.pos), batch_size)
 
         batch_obs = []
         batch_action = []
@@ -129,13 +129,13 @@ class DQNBuffer(BaseBuffer):
             batch_action.append(self.actions[inx])
             batch_done.append(self.dones[inx])
             batch_reward.append(self.rewards[inx])
-        
-        batch_obs = np.array(batch_obs)       
+
+        batch_obs = np.array(batch_obs)
         batch_action = np.array(batch_action)
         batch_reward = np.array(batch_reward)
         batch_done = np.array(batch_done)
         batch_obs_ = np.array(batch_obs_)
-        
+
         tensor_obs = torch.as_tensor(batch_obs)
         tensor_obs_ = torch.as_tensor(batch_obs_)
         tensor_action = torch.as_tensor(batch_action)
@@ -177,15 +177,14 @@ class PER(BaseBuffer):
         index = 0
         while True:
             left = index*2 + 1
-            if left < len(self._sum_tree): 
-                if self._sum_tree[left] < weight or np.isclose(weight, self._sum_tree[left], rtol=1e-3):
-                    weight -= self._sum_tree[left]
-                    index = left + 1 # to right node
-                else:
-                    index = left
-            else:
+            if left >= len(self._sum_tree):
                 break
 
+            if self._sum_tree[left] < weight or np.isclose(weight, self._sum_tree[left], rtol=1e-3):
+                weight -= self._sum_tree[left]
+                index = left + 1 # to right node
+            else:
+                index = left
         return index-self.buffer_size-1
 
     def add(
@@ -211,6 +210,8 @@ class PER(BaseBuffer):
         self._sum_tree[self.buffer_size + self.pos -1]  = 1
 
     def sample(self, batch_size: int):
-        uniofrm_wights = [ random.uniform(0,self.priority_max) for i in range(batch_size)]
+        uniofrm_wights = [
+            random.uniform(0, self.priority_max) for _ in range(batch_size)
+        ]
 
         return super().sample(batch_size)

@@ -21,13 +21,15 @@ class Actor(nn.Module):
 
     def forward(self, state: Tensor):
 
-        # TODO: Use nn.ModuleDict for selecting diff activation func
-
-        # FIXME: torch.jit.script raises torch.jit.frontend.UnsupportedNodeError: Lambda aren't supported
-        action = torch.tanh(self.layers[-1](
-            reduce( lambda activation, layer: F.relu(layer(activation)), self.layers[:-1], state )))
-            
-        return action
+        return torch.tanh(
+            self.layers[-1](
+                reduce(
+                    lambda activation, layer: F.relu(layer(activation)),
+                    self.layers[:-1],
+                    state,
+                )
+            )
+        )
 
 
 class Critic(nn.Module):
@@ -44,10 +46,13 @@ class Critic(nn.Module):
 
     def forward(self, state: Tensor, action: Tensor):
 
-        value = self.layers[-1](
-            reduce( lambda activation, layer: F.relu(layer(activation)), self.layers[:-1], torch.cat([state, action], dim=1) ))
-
-        return value
+        return self.layers[-1](
+            reduce(
+                lambda activation, layer: F.relu(layer(activation)),
+                self.layers[:-1],
+                torch.cat([state, action], dim=1),
+            )
+        )
 
 
 @torch.no_grad()

@@ -45,8 +45,8 @@ def _build_agent(env:gym.Env, agent_cfg:Dict):
         action_dim=get_action_dim(env.action_space),
         hidden_dims=[128,128]
     )
-    agent = DDPG(
-        actor= actor,
+    return DDPG(
+        actor=actor,
         critic=critic,
         actor_optimiser=torch.optim.Adam,
         critic_optimiser=torch.optim.Adam,
@@ -54,9 +54,8 @@ def _build_agent(env:gym.Env, agent_cfg:Dict):
         discount_factor=agent_cfg["dicount_factor"],
         batch_size=agent_cfg["batch_sizes"],
         polyak=agent_cfg["polyak"],
-        noise=Gaussian(0.01)
+        noise=Gaussian(0.01),
     )
-    return agent
 
 def into_tensor(s, a, r, s_,done):
     s = torch.as_tensor(s)
@@ -76,24 +75,24 @@ def main():
     s,_ = env.reset()
     reward_buffer = []
     for episode_i in range(cfg["episodes"]):
-        episode_reward = 0    
-        for step_i in range(cfg["n_steps"]):
+        episode_reward = 0
+        for _ in range(cfg["n_steps"]):
             a = agent.compute_action(torch.as_tensor(s))
             s_, r, done, _, info = env.step(np.array(a))
             s, a, r, s_, done = into_tensor(s,a,r,s_,done)
             agent.memory.push(action=a, next_state=s_, state=s, done=done,reward=r)
-            
+
             episode_reward += r
             agent.update()
-            
+
             s = s_
             if done:
                 s,_ = env.reset()
                 break
-        
-        if(len(reward_buffer)>0 and episode_reward>max(reward_buffer)):
-            print(f"model need update")
-            
+
+        if reward_buffer and episode_reward > max(reward_buffer):
+            print("model need update")
+
         print(f"epsisode:{episode_i}, reward:{episode_reward}")
         episode_reward = 0
 
