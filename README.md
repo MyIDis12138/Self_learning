@@ -14,6 +14,8 @@
 
 [Online book] | [Reinforcement Learning textbook](http://incompleteideas.net/book/RLbook2020.pdf)
 
+[Online book] | [DeepLearning-500-questions] (https://github.com/scutan90/DeepLearning-500-questions/tree/master)
+
 [videos] | [DeepMind X UCL 2021 online course](https://www.youtube.com/watch?v=TCCjZe0y4Qc&list=PLqRF21Jxw1hLwqzN-uCv-x2pszaQrbsCN)
 
 [videos] | [UC berkeley 2020 online course](https://www.bilibili.com/video/BV12341167kL?spm_id_from=333.999.0.0&vd_source=f00e550240a24857f20e7b19be677b54)
